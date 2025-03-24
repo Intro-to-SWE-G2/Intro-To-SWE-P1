@@ -31,10 +31,10 @@ const HomePage = () => {
             <h1 className="text-2xl font-bold text-blue-600">CampusMarket</h1>
           </div>
           <nav className="hidden md:flex space-x-6">
-            <a href="#" className="text-gray-700 hover:text-blue-600 font-medium">
+            <a href="/home" className="text-gray-700 hover:text-blue-600 font-medium">
               Home
             </a>
-            <a href="#" className="text-gray-700 hover:text-blue-600 font-medium">
+            <a href="/browse" className="text-gray-700 hover:text-blue-600 font-medium">
               Browse
             </a>
             <a href="#" className="text-gray-700 hover:text-blue-600 font-medium">
