@@ -1,44 +1,10 @@
 import { Search, ShoppingBag, Users, Star, ArrowRight } from "lucide-react"
+import Navbar from "./Navbar";
 
 const HomePage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
-      {/* Navigation */}
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <div className="flex-shrink-0 flex items-center">
-                <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center">
-                  <ShoppingBag className="h-5 w-5 text-white" />
-                </div>
-                <span className="ml-2 text-xl font-bold text-gray-800">CampusMarket</span>
-              </div>
-            </div>
-            <div className="flex items-center">
-              <div className="hidden md:ml-6 md:flex md:space-x-8">
-                <a href="#features" className="text-gray-600 hover:text-blue-500 px-3 py-2 text-sm font-medium">
-                  Features
-                </a>
-                <a href="#how-it-works" className="text-gray-600 hover:text-blue-500 px-3 py-2 text-sm font-medium">
-                  How It Works
-                </a>
-                <a href="#testimonials" className="text-gray-600 hover:text-blue-500 px-3 py-2 text-sm font-medium">
-                  Testimonials
-                </a>
-              </div>
-              <div className="flex items-center ml-6">
-                <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-300">
-                  Sign Up
-                </button>
-                <button className="ml-4 text-blue-500 hover:text-blue-600 px-4 py-2 text-sm font-medium transition-colors duration-300">
-                  Log In
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Hero Section */}
       <div className="relative overflow-hidden">
