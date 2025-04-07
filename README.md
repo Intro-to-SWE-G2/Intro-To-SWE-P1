@@ -2,6 +2,10 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Database Connection Details
+Connection URL: ``mongodb+srv://admin:2juuDSyBkEF7kuDF@cluster0.dpr0kut.mongodb.net/?retryWrites=true&w=majority``
+Database Name: ``swe``
+
 ## Available Scripts
 
 In the project directory, you can run:
