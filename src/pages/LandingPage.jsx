@@ -1,5 +1,5 @@
 import { Search, ShoppingBag, Users, Star, ArrowRight } from "lucide-react"
-import Navbar from "./Navbar";
+import Navbar from "../components/Navbar";
 
 const HomePage = () => {
   return (

@@ -2,7 +2,7 @@ import { useState } from "react"
 import { SearchIcon, FilterIcon, StarIcon } from "../icons/HomePageIcons"
 import { items as MOCK_ITEMS } from "../mocks/mockData"
 import { categories as CATEGORIES } from "../mocks/mockData"
-import Navbar from "./Navbar";
+import Navbar from "../components/Navbar";
 
 const HomePage = () => {
   const [searchTerm, setSearchTerm] = useState("")
