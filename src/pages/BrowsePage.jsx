@@ -1,10 +1,12 @@
+// BrowsePage.jsx
 import { useState, useEffect } from "react"
 import { FilterIcon } from "../icons/HomePageIcons"
-import { items, sortOptions } from "../mocks/mockData"
+import { sortOptions } from "../mocks/mockData"
 import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
 import FiltersSidebar from "../components/FiltersSidebar"
 import ItemGrid from "../components/ItemGrid"
+import { fetchItems } from "../api/items"
 
 const BrowsePage = () => {
   const [searchTerm, setSearchTerm] = useState("")
@@ -12,12 +14,27 @@ const BrowsePage = () => {
   const [selectedCondition, setSelectedCondition] = useState("All")
   const [sortBy, setSortBy] = useState("newest")
   const [priceRange, setPriceRange] = useState({ min: 0, max: 200 })
-  const [filteredItems, setFilteredItems] = useState(items)
+  const [allItems, setAllItems] = useState([])
+  const [filteredItems, setFilteredItems] = useState([])
   const [isFilterOpen, setIsFilterOpen] = useState(false)
+
+  // Fetch items from API on mount
+  useEffect(() => {
+    const loadItems = async () => {
+      try {
+        const data = await fetchItems()
+        setAllItems(data)
+        setFilteredItems(data)
+      } catch (err) {
+        console.error("Error fetching items:", err)
+      }
+    }
+    loadItems()
+  }, [])
 
   // Apply filters and sorting
   useEffect(() => {
-    let result = [...items]
+    let result = [...allItems]
 
     // Apply search filter
     if (searchTerm) {
@@ -62,7 +79,7 @@ const BrowsePage = () => {
     }
 
     setFilteredItems(result)
-  }, [searchTerm, selectedCategory, selectedCondition, sortBy, priceRange])
+  }, [searchTerm, selectedCategory, selectedCondition, sortBy, priceRange, allItems])
 
   const resetFilters = () => {
     setSearchTerm("")
@@ -143,10 +160,7 @@ const BrowsePage = () => {
             </div>
 
             {/* Items Grid */}
-            <ItemGrid
-              items={filteredItems}
-              emptyMessage="No items found"
-            />
+            <ItemGrid items={filteredItems} emptyMessage="No items found" />
           </div>
         </div>
       </div>

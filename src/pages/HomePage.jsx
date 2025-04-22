@@ -1,7 +1,6 @@
 // HomePage.jsx
 import { useState } from "react"
 import { SearchIcon, FilterIcon } from "../icons/HomePageIcons"
-import { items as MOCK_ITEMS } from "../mocks/mockData"
 import { categories as CATEGORIES } from "../mocks/mockData"
 import Navbar from "../components/Navbar"
 import ItemGrid from "../components/ItemGrid"
@@ -10,21 +9,6 @@ import Footer from "../components/Footer"
 const HomePage = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("All")
-
-  // Filter items based on search term and category
-  const filteredItems = MOCK_ITEMS.filter((item) => {
-    const matchesSearch =
-      item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.description.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = selectedCategory === "All" || item.category === selectedCategory
-    return matchesSearch && matchesCategory
-  })
-
-  // Get featured items
-  const featuredItems = MOCK_ITEMS.filter((item) => item.featured)
-
-  // Get recommended items
-  const recommendedItems = MOCK_ITEMS.filter((item) => item.recommended)
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -72,32 +56,20 @@ const HomePage = () => {
       </section>
 
       {/* Featured Items */}
-      {featuredItems.length > 0 && (
-        <section className="py-10 bg-white">
-          <div className="container mx-auto px-4">
-            <h2 className="text-2xl font-bold mb-6 text-gray-800">Featured Items</h2>
-            <ItemGrid items={featuredItems} />
-          </div>
-        </section>
-      )}
-
-      {/* All Listings */}
-      <section className="py-10 bg-gray-50">
+      <section className="py-10 bg-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold mb-6 text-gray-800">All Listings</h2>
-          <ItemGrid items={filteredItems} emptyMessage="No items found matching your search criteria." />
+          <h2 className="text-2xl font-bold mb-6 text-gray-800">Featured Items</h2>
+          <ItemGrid query="featured" />
         </div>
       </section>
 
       {/* Recommended Items */}
-      {recommendedItems.length > 0 && (
-        <section className="py-10 bg-white">
-          <div className="container mx-auto px-4">
-            <h2 className="text-2xl font-bold mb-6 text-gray-800">Recommended For You</h2>
-            <ItemGrid items={recommendedItems.slice(0, 4)} />
-          </div>
-        </section>
-      )}
+      <section className="py-10 bg-white">
+        <div className="container mx-auto px-4">
+          <h2 className="text-2xl font-bold mb-6 text-gray-800">Recommended For You</h2>
+          <ItemGrid query="recommended" />
+        </div>
+      </section>
 
       {/* Footer */}
       <Footer />
