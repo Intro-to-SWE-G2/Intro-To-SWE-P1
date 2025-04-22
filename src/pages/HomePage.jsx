@@ -1,77 +1,52 @@
 // HomePage.jsx
-import { useState } from "react"
-import { SearchIcon, FilterIcon } from "../icons/HomePageIcons"
-import { categories as CATEGORIES } from "../mocks/mockData"
-import Navbar from "../components/Navbar"
-import ItemGrid from "../components/ItemGrid"
+import { useEffect, useState } from "react"
 import Footer from "../components/Footer"
+import ItemGrid from "../components/ItemGrid"
+import Navbar from "../components/Navbar"
+import { useItemsAPI } from "../hooks/useItemsAPI"
 
 const HomePage = () => {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("All")
+  const { fetchItems } = useItemsAPI()
+  const [items, setItems] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await fetchItems()
+        const featuredItems = data.filter((i) => i.featured)
+        setItems(featuredItems)
+      } catch (err) {
+        console.error("Error loading featured items:", err)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    load()
+  }, [fetchItems])
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <Navbar />
-      </header>
+      <Navbar />
 
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-12">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Find What You Need, Sell What You Don't</h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto">
-            The marketplace for students, by students. Buy and sell textbooks, electronics, dorm essentials, and more!
+      <div className="bg-white border-b">
+        <div className="container mx-auto px-4 py-10 text-center">
+          <h1 className="text-4xl font-bold text-gray-800 mb-4">Welcome to CampusMarket</h1>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Buy, sell, and discover great items within your student community. Sustainable shopping starts here.
           </p>
-
-          {/* Search Bar */}
-          <div className="max-w-2xl mx-auto flex flex-col md:flex-row gap-4">
-            <div className="relative flex-grow">
-              <input
-                type="text"
-                placeholder="Search for items..."
-                className="w-full px-4 py-3 rounded-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-300"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <SearchIcon className="absolute right-3 top-3 h-6 w-6 text-gray-400" />
-            </div>
-            <div className="relative">
-              <select
-                className="appearance-none bg-white text-gray-800 font-medium py-3 px-4 pr-8 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-              >
-                {CATEGORIES.map((category) => (
-                  <option key={category.id} value={category.name}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
-              <FilterIcon className="absolute right-3 top-3 h-5 w-5 text-gray-500 pointer-events-none" />
-            </div>
-          </div>
         </div>
-      </section>
+      </div>
 
-      {/* Featured Items */}
-      <section className="py-10 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold mb-6 text-gray-800">Featured Items</h2>
-          <ItemGrid query="featured" />
-        </div>
-      </section>
+      <div className="container mx-auto px-4 py-10">
+        <h2 className="text-2xl font-semibold text-gray-800 mb-6">Featured Listings</h2>
+        {isLoading ? (
+          <div className="text-center text-gray-500 py-6">Loading items...</div>
+        ) : (
+          <ItemGrid items={items} emptyMessage="No featured listings at the moment." />
+        )}
+      </div>
 
-      {/* Recommended Items */}
-      <section className="py-10 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold mb-6 text-gray-800">Recommended For You</h2>
-          <ItemGrid query="recommended" />
-        </div>
-      </section>
-
-      {/* Footer */}
       <Footer />
     </div>
   )

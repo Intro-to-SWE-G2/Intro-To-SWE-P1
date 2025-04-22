@@ -1,12 +1,15 @@
+// NewListing.jsx
 import { useState } from "react"
 import { ArrowLeft } from "lucide-react"
 import { categories as CATEGORIES } from "../mocks/mockData"
-import { createItem } from "../api/items"
 import { useAuth0 } from "@auth0/auth0-react"
 import { Navigate } from "react-router-dom"
+import { useItemsAPI } from "../hooks/useItemsAPI"
 
 const CreateListing = () => {
   const { isAuthenticated, user } = useAuth0()
+  const { createItem } = useItemsAPI()
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -24,13 +27,8 @@ const CreateListing = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setFormData({
-      ...formData,
-      [name]: value,
-    })
-    if (errors[name]) {
-      setErrors({ ...errors, [name]: null })
-    }
+    setFormData({ ...formData, [name]: value })
+    if (errors[name]) setErrors({ ...errors, [name]: null })
   }
 
   const handleImageChange = (e) => {
@@ -301,8 +299,8 @@ const CreateListing = () => {
               )}
             </div>
 
-             {/* Submit Error */}
-             {errors.submit && (
+            {/* Submit Error */}
+            {errors.submit && (
               <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
                 {errors.submit}
               </div>
@@ -325,7 +323,14 @@ const CreateListing = () => {
                       fill="none"
                       viewBox="0 0 24 24"
                     >
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
                       <path
                         className="opacity-75"
                         fill="currentColor"

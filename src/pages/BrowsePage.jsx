@@ -1,12 +1,12 @@
 // BrowsePage.jsx
-import { useState, useEffect } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { FilterIcon } from "../icons/HomePageIcons"
 import { sortOptions } from "../mocks/mockData"
 import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
 import FiltersSidebar from "../components/FiltersSidebar"
 import ItemGrid from "../components/ItemGrid"
-import { fetchItems } from "../api/items"
+import { useItemsAPI } from "../hooks/useItemsAPI"
 
 const BrowsePage = () => {
   const [searchTerm, setSearchTerm] = useState("")
@@ -15,52 +15,47 @@ const BrowsePage = () => {
   const [sortBy, setSortBy] = useState("newest")
   const [priceRange, setPriceRange] = useState({ min: 0, max: 200 })
   const [allItems, setAllItems] = useState([])
-  const [filteredItems, setFilteredItems] = useState([])
   const [isFilterOpen, setIsFilterOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const { fetchItems } = useItemsAPI()
 
-  // Fetch items from API on mount
   useEffect(() => {
     const loadItems = async () => {
       try {
         const data = await fetchItems()
         setAllItems(data)
-        setFilteredItems(data)
       } catch (err) {
         console.error("Error fetching items:", err)
+      } finally {
+        setIsLoading(false)
       }
     }
     loadItems()
-  }, [])
+  }, [fetchItems])
 
-  // Apply filters and sorting
-  useEffect(() => {
+  const filteredItems = useMemo(() => {
     let result = [...allItems]
 
-    // Apply search filter
     if (searchTerm) {
       result = result.filter(
         (item) =>
-          item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           item.description.toLowerCase().includes(searchTerm.toLowerCase())
       )
     }
 
-    // Apply category filter
     if (selectedCategory !== "All") {
       result = result.filter((item) => item.category === selectedCategory)
     }
 
-    // Apply condition filter
     if (selectedCondition !== "All") {
       result = result.filter((item) => item.condition === selectedCondition)
     }
 
-    // Apply price range filter
     result = result.filter(
       (item) => item.price >= priceRange.min && item.price <= priceRange.max
     )
 
-    // Apply sorting
     switch (sortBy) {
       case "newest":
         result.sort((a, b) => new Date(b.postedDate) - new Date(a.postedDate))
@@ -78,7 +73,7 @@ const BrowsePage = () => {
         break
     }
 
-    setFilteredItems(result)
+    return result
   }, [searchTerm, selectedCategory, selectedCondition, sortBy, priceRange, allItems])
 
   const resetFilters = () => {
@@ -91,12 +86,10 @@ const BrowsePage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <header className="bg-white shadow-sm">
         <Navbar />
       </header>
 
-      {/* Browse Header */}
       <div className="bg-white border-b">
         <div className="container mx-auto px-4 py-6">
           <h1 className="text-3xl font-bold text-gray-800">Browse Items</h1>
@@ -104,10 +97,8 @@ const BrowsePage = () => {
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Filters - Mobile Toggle */}
           <div className="lg:hidden mb-4">
             <button
               onClick={() => setIsFilterOpen(!isFilterOpen)}
@@ -118,7 +109,6 @@ const BrowsePage = () => {
             </button>
           </div>
 
-          {/* Filters Sidebar */}
           <div className={`${isFilterOpen ? 'block' : 'hidden'} lg:block lg:w-1/4`}>
             <FiltersSidebar
               searchTerm={searchTerm}
@@ -133,9 +123,7 @@ const BrowsePage = () => {
             />
           </div>
 
-          {/* Items Grid */}
           <div className="lg:w-3/4">
-            {/* Sort Controls */}
             <div className="bg-white rounded-lg shadow-md p-4 mb-6 flex flex-col sm:flex-row justify-between items-center">
               <p className="text-gray-600 mb-3 sm:mb-0">
                 <span className="font-medium">{filteredItems.length}</span> items found
@@ -159,13 +147,15 @@ const BrowsePage = () => {
               </div>
             </div>
 
-            {/* Items Grid */}
-            <ItemGrid items={filteredItems} emptyMessage="No items found" />
+            {isLoading ? (
+              <div className="text-center text-gray-500 py-6">Loading items...</div>
+            ) : (
+              <ItemGrid items={filteredItems} emptyMessage="No items found" />
+            )}
           </div>
         </div>
       </div>
 
-      {/* Footer */}
       <Footer />
     </div>
   )

@@ -1,47 +1,42 @@
-import React from "react";
-import { useAuth0 } from "@auth0/auth0-react";
+// Navbar.jsx
+import React from "react"
+import { useAuth0 } from "@auth0/auth0-react"
+import { Link } from "react-router-dom"
 
 const Navbar = () => {
-  const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
+  const { isAuthenticated, isLoading, loginWithRedirect, logout } = useAuth0()
+
+  if (isLoading) return null
 
   return (
     <header className="bg-white shadow-sm">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         {/* Logo */}
         <div className="flex items-center">
-          <a href="/" className="text-2xl font-bold text-blue-600">CampusMarket</a>
+          <Link to="/" className="text-2xl font-bold text-blue-600">CampusMarket</Link>
         </div>
 
         {/* Main Nav Links */}
         <nav className="hidden md:flex space-x-6">
-          <a href="/home" className="text-gray-700 hover:text-blue-600 font-medium">
+          <Link to="/home" className="text-gray-700 hover:text-blue-600 font-medium">
             Home
-          </a>
-          <a href="/browse" className="text-gray-700 hover:text-blue-600 font-medium">
+          </Link>
+          <Link to="/browse" className="text-gray-700 hover:text-blue-600 font-medium">
             Browse
-          </a>
-          <a
-            href={isAuthenticated ? "/account" : "#"}
-            onClick={(e) => {
-              if (!isAuthenticated) {
-                e.preventDefault();
-                loginWithRedirect();
-              }
-            }}
-            className="text-gray-700 hover:text-blue-600 font-medium"
-          >
+          </Link>
+          <Link to="/account" className="text-gray-700 hover:text-blue-600 font-medium">
             My Account
-          </a>
+          </Link>
         </nav>
 
         {/* Action Buttons */}
         <div className="flex items-center space-x-4">
-          <a
-            href="/new"
+          <Link
+            to="/new"
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition-colors"
           >
             List an Item
-          </a>
+          </Link>
 
           {isAuthenticated ? (
             <button
@@ -69,7 +64,7 @@ const Navbar = () => {
         </div>
       </div>
     </header>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar
