@@ -1,39 +1,53 @@
-require('dotenv').config();
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const { expressjwt: jwt } = require('express-jwt');
-const jwks = require('jwks-rsa');
+// server.js
+const express = require("express")
+const cors = require("cors")
+const mongoose = require("mongoose")
+const dotenv = require("dotenv")
+const path = require("path")
+const { expressjwt: jwt } = require("express-jwt")
+const jwksRsa = require("jwks-rsa")
 
-const app = express();
-app.use(express.json());
-app.use(cors());
+const itemRoutes = require("./routes/itemRoutes")
+const userRoutes = require("./routes/userRoutes")
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-}).then(() => console.log("Connected to MongoDB"))
-.catch(err => console.error("MongoDB connection error:", err));
+dotenv.config()
 
-// Auth0 Middleware
-const authMiddleware = jwt({
-    secret: jwks.expressJwtSecret({
-        cache: true,
-        rateLimit: true,
-        jwksUri: `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`
-    }),
-    audience: process.env.AUTH0_AUDIENCE,
-    issuer: `https://${process.env.AUTH0_DOMAIN}/`,
-    algorithms: ['RS256']
-});
+const app = express()
+const PORT = process.env.PORT || 5000
 
-// Import Routes
-const userRoutes = require('./routes/userRoutes');
-const itemRoutes = require('./routes/itemRoutes');
+app.use(cors())
+app.use(express.json())
 
-app.use('/api/users', userRoutes);
-app.use('/api/items', authMiddleware, itemRoutes);
+// JWT Middleware to protect API routes
+const checkJwt = jwt({
+  secret: jwksRsa.expressJwtSecret({
+    cache: true,
+    rateLimit: true,
+    jwksRequestsPerMinute: 5,
+    jwksUri: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/.well-known/jwks.json`,
+  }),
+  audience: "https://campusmarket-api",
+  issuer: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/`,
+  algorithms: ["RS256"],
+})
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// MongoDB Connection
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.error("MongoDB connection error:", err))
+
+// Routes
+app.use("/api/items", itemRoutes) // public access to browse
+app.use("/api/items-secure", checkJwt, itemRoutes) // secure version for write ops
+app.use("/api/users", checkJwt, userRoutes)
+
+// Serve frontend in production
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../build")))
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../build", "index.html"))
+  })
+}
+
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`))

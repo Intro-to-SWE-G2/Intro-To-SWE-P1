@@ -7,6 +7,8 @@ const ItemSchema = new mongoose.Schema({
     seller: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // References the seller
     ratings: [{ type: Number }], // List of ratings from buyers
     averageRating: { type: Number, default: 0 }, // Average rating of this item
+    featured: { type: Boolean, default: false },
+    recommended: { type: Boolean, default: false }, 
 }, { timestamps: true });
 
 // Function to update the item's average rating
