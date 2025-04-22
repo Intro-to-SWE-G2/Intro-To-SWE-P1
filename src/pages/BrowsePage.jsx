@@ -1,4 +1,4 @@
-// BrowsePage.jsx
+// File: src/pages/BrowsePage.jsx
 import { useEffect, useState, useMemo } from "react"
 import { FilterIcon } from "../icons/HomePageIcons"
 import { sortOptions } from "../mocks/mockData"
@@ -22,8 +22,9 @@ const BrowsePage = () => {
   useEffect(() => {
     const loadItems = async () => {
       try {
-        const data = await fetchItems()
-        setAllItems(data)
+        const response = await fetchItems()
+        const itemsArray = response.data || []  // extract array from response
+        setAllItems(itemsArray)
       } catch (err) {
         console.error("Error fetching items:", err)
       } finally {
@@ -39,8 +40,8 @@ const BrowsePage = () => {
     if (searchTerm) {
       result = result.filter(
         (item) =>
-          item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.description.toLowerCase().includes(searchTerm.toLowerCase())
+          item.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.description?.toLowerCase().includes(searchTerm.toLowerCase())
       )
     }
 

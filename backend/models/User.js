@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
+    _id: { type: String, required: true },  // <- Add this line to allow Auth0 IDs
+    name: String,
     username: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
     sellingItems: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Item' }],
