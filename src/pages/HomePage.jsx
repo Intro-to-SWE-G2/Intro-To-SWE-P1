@@ -1,4 +1,4 @@
-// HomePage.jsx
+// File: src/pages/HomePage.jsx
 import { useEffect, useState } from "react"
 import Footer from "../components/Footer"
 import ItemGrid from "../components/ItemGrid"
@@ -13,8 +13,9 @@ const HomePage = () => {
   useEffect(() => {
     const load = async () => {
       try {
-        const data = await fetchItems()
-        const featuredItems = data.filter((i) => i.featured)
+        const response = await fetchItems()
+        const itemsArray = response.data || []  // extract array from response
+        const featuredItems = itemsArray.filter((i) => i.featured)
         setItems(featuredItems)
       } catch (err) {
         console.error("Error loading featured items:", err)

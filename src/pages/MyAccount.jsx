@@ -1,4 +1,3 @@
-// MyAccount.jsx
 import { useEffect, useState } from "react"
 import { useAuth0 } from "@auth0/auth0-react"
 import { Navigate } from "react-router-dom"
@@ -9,21 +8,30 @@ import Navbar from "../components/Navbar"
 
 const MyAccount = () => {
   const { isAuthenticated, user } = useAuth0()
-  const { fetchItems } = useItemsAPI()
+  const { fetchItemsBySeller, deleteItem } = useItemsAPI()
   const [myItems, setMyItems] = useState([])
 
   useEffect(() => {
     const loadUserItems = async () => {
       try {
-        const allItems = await fetchItems()
-        const userItems = allItems.filter((item) => item.userId === user.sub)
-        setMyItems(userItems)
+        const items = await fetchItemsBySeller(user.sub)
+        console.log("🧪 My fetched items:", items)
+        setMyItems(items)
       } catch (err) {
         console.error("Error loading user's items:", err)
       }
     }
     if (isAuthenticated && user) loadUserItems()
-  }, [isAuthenticated, user, fetchItems])
+  }, [isAuthenticated, user])
+
+  const handleDelete = async (itemId) => {
+    try {
+      await deleteItem(itemId)
+      setMyItems(prev => prev.filter(item => item._id !== itemId))
+    } catch (err) {
+      console.error("Error deleting item:", err)
+    }
+  }
 
   if (!isAuthenticated) return <Navigate to="/" replace />
 
@@ -43,7 +51,11 @@ const MyAccount = () => {
         </div>
 
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">My Listings</h2>
-        <ItemGrid items={myItems} emptyMessage="You haven’t listed anything yet." />
+        <ItemGrid
+          items={myItems}
+          emptyMessage="You haven’t listed anything yet."
+          onDelete={handleDelete} // Pass down delete handler
+        />
       </div>
 
       <Footer />

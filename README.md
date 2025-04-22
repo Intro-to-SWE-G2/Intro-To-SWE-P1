@@ -21,12 +21,12 @@ You may also see any lint errors in the console.
 ### `cd backend`
 ### `npm start`
 
-This starts the server.\
+This starts the server.
 
 ### `cd backend`
 ### `node seed.js`
 
-This seeds mock data into the server.\
+This seeds mock data into the server.
 
 ### `npm test`
 

@@ -1,7 +1,6 @@
-// src/components/ItemGrid.jsx
 import ItemCard from "./ItemCard"
 
-const ItemGrid = ({ items = [], emptyMessage = "No items found" }) => {
+const ItemGrid = ({ items = [], emptyMessage = "No items found", onDelete }) => {
   if (!items.length) {
     return (
       <div className="bg-white rounded-lg shadow-md p-8 text-center">
@@ -14,10 +13,10 @@ const ItemGrid = ({ items = [], emptyMessage = "No items found" }) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {items.map((item) => (
-        <ItemCard key={item._id || item.id} item={item} />
+        <ItemCard key={item._id || item.id} item={item} onDelete={onDelete} />
       ))}
     </div>
   )
 }
 
-export default ItemGrid
+export default ItemGrid;
