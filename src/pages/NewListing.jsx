@@ -1,18 +1,15 @@
+// NewListing.jsx
 import { useState } from "react"
 import { ArrowLeft } from "lucide-react"
 import { categories as CATEGORIES } from "../mocks/mockData"
-
-// Mock function to simulate API call
-const createListing = (listingData) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      console.log("Listing created:", listingData)
-      resolve({ success: true, id: Math.floor(Math.random() * 1000) })
-    }, 1000)
-  })
-}
+import { useAuth0 } from "@auth0/auth0-react"
+import { Navigate } from "react-router-dom"
+import { useItemsAPI } from "../hooks/useItemsAPI"
 
 const CreateListing = () => {
+  const { isAuthenticated, user } = useAuth0()
+  const { createItem } = useItemsAPI()
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -26,93 +23,54 @@ const CreateListing = () => {
   const [previewImages, setPreviewImages] = useState([])
   const [success, setSuccess] = useState(false)
 
+  if (!isAuthenticated) return <Navigate to="/" replace />
+
   const handleChange = (e) => {
     const { name, value } = e.target
-    setFormData({
-      ...formData,
-      [name]: value,
-    })
-
-    // Clear error when field is edited
-    if (errors[name]) {
-      setErrors({
-        ...errors,
-        [name]: null,
-      })
-    }
+    setFormData({ ...formData, [name]: value })
+    if (errors[name]) setErrors({ ...errors, [name]: null })
   }
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files)
-
     if (files.length > 5) {
-      setErrors({
-        ...errors,
-        images: "Maximum 5 images allowed",
-      })
+      setErrors({ ...errors, images: "Maximum 5 images allowed" })
       return
     }
-
-    // Create preview URLs
     const newPreviewImages = files.map((file) => URL.createObjectURL(file))
     setPreviewImages(newPreviewImages)
-
-    setFormData({
-      ...formData,
-      images: files,
-    })
+    setFormData({ ...formData, images: files })
   }
 
   const validateForm = () => {
     const newErrors = {}
-
-    if (!formData.title.trim()) {
-      newErrors.title = "Title is required"
-    }
-
-    if (!formData.description.trim()) {
-      newErrors.description = "Description is required"
-    }
-
-    if (!formData.price) {
-      newErrors.price = "Price is required"
-    } else if (isNaN(formData.price) || Number.parseFloat(formData.price) <= 0) {
+    if (!formData.title.trim()) newErrors.title = "Title is required"
+    if (!formData.description.trim()) newErrors.description = "Description is required"
+    if (!formData.price) newErrors.price = "Price is required"
+    else if (isNaN(formData.price) || Number.parseFloat(formData.price) <= 0) {
       newErrors.price = "Price must be a positive number"
     }
-
-    if (!formData.category) {
-      newErrors.category = "Category is required"
-    }
-
-    if (formData.images.length === 0) {
-      newErrors.images = "At least one image is required"
-    }
-
+    if (!formData.category) newErrors.category = "Category is required"
+    if (formData.images.length === 0) newErrors.images = "At least one image is required"
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-
-    if (!validateForm()) {
-      return
-    }
-
+    if (!validateForm()) return
     setIsSubmitting(true)
-
     try {
-      // Format data for API
       const listingData = {
         ...formData,
         price: Number.parseFloat(formData.price),
+        userEmail: user.email,
+        userId: user.sub,
+        userName: user.name,
       }
-
-      const response = await createListing(listingData)
-
+      const response = await createItem(listingData)
       if (response.success) {
         setSuccess(true)
-        // Reset form
         setFormData({
           title: "",
           description: "",
@@ -125,10 +83,7 @@ const CreateListing = () => {
       }
     } catch (error) {
       console.error("Error creating listing:", error)
-      setErrors({
-        ...errors,
-        submit: "Failed to create listing. Please try again.",
-      })
+      setErrors({ ...errors, submit: "Failed to create listing. Please try again." })
     } finally {
       setIsSubmitting(false)
     }
@@ -138,10 +93,10 @@ const CreateListing = () => {
     <div className="max-w-4xl mx-auto p-6">
       <div className="bg-white rounded-lg shadow-md p-8">
         {/* Back button */}
-      <a href="/home" className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-2">
-        <ArrowLeft className="h-4 w-4 mr-1" />
-        Back to listings
-      </a>
+        <a href="/home" className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-2">
+          <ArrowLeft className="h-4 w-4 mr-1" />
+          Back to listings
+        </a>
 
         <h1 className="text-3xl font-bold text-blue-600 mb-6">List Your Item</h1>
 
@@ -346,7 +301,9 @@ const CreateListing = () => {
 
             {/* Submit Error */}
             {errors.submit && (
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">{errors.submit}</div>
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                {errors.submit}
+              </div>
             )}
 
             {/* Submit Button */}
@@ -373,12 +330,12 @@ const CreateListing = () => {
                         r="10"
                         stroke="currentColor"
                         strokeWidth="4"
-                      ></circle>
+                      />
                       <path
                         className="opacity-75"
                         fill="currentColor"
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
+                      />
                     </svg>
                     Creating Listing...
                   </span>
