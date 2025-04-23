@@ -2,8 +2,6 @@
 import { useEffect, useState, useMemo } from "react"
 import { FilterIcon } from "../icons/HomePageIcons"
 import { sortOptions } from "../mocks/mockData"
-import Navbar from "../components/Navbar"
-import Footer from "../components/Footer"
 import FiltersSidebar from "../components/FiltersSidebar"
 import ItemGrid from "../components/ItemGrid"
 import { useItemsAPI } from "../hooks/useItemsAPI"
@@ -87,10 +85,6 @@ const BrowsePage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm">
-        <Navbar />
-      </header>
-
       <div className="bg-white border-b">
         <div className="container mx-auto px-4 py-6">
           <h1 className="text-3xl font-bold text-gray-800">Browse Items</h1>
@@ -156,8 +150,6 @@ const BrowsePage = () => {
           </div>
         </div>
       </div>
-
-      <Footer />
     </div>
   )
 }
