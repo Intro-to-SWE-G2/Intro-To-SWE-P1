@@ -21,8 +21,8 @@ const ItemCard = ({ item, featured = false, recommended = false, onDelete }) => 
     >
       <div className="relative">
         <img
-          src={item.image || "/placeholder.svg"}
-          alt={item.name}
+          src={item.image || item.images?.[0] || "/placeholder.svg"}
+          alt={item.name || item.title}
           className="w-full h-48 object-cover"
         />
         {featured && (
@@ -38,7 +38,7 @@ const ItemCard = ({ item, featured = false, recommended = false, onDelete }) => 
       </div>
       <div className="p-4">
         <div className="flex justify-between items-start">
-          <h3 className="text-lg font-semibold text-gray-800 mb-1">{item.name}</h3>
+          <h3 className="text-lg font-semibold text-gray-800 mb-1">{item.name || item.title}</h3>
           <p className="font-bold text-blue-600">
             ${item.price.toFixed(2)}
           </p>
@@ -50,9 +50,12 @@ const ItemCard = ({ item, featured = false, recommended = false, onDelete }) => 
           {item.description}
         </p>
         <div className="flex justify-between items-center">
-          <p className="text-xs text-gray-500">
+          <Link 
+            to={`/seller/${sellerId}`}
+            className="text-xs text-gray-500 hover:text-blue-600"
+          >
             Posted by {item.seller?.username || item.seller?.name || "Anonymous"}
-          </p>
+          </Link>
           {isOwner && onDelete && (
             <button
               className="mt-2 text-sm text-red-600 hover:underline"
