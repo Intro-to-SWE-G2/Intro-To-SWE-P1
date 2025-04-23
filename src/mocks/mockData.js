@@ -186,24 +186,24 @@ export const items = [
 ];
 
 export const categories = [
-  { id: 1, name: "Textbooks" },
-  { id: 2, name: "Electronics" },
+  { id: 1, name: "Electronics" },
+  { id: 2, name: "Books" },
   { id: 3, name: "Furniture" },
   { id: 4, name: "Clothing" },
-  { id: 5, name: "School Supplies" },
-  { id: 6, name: "Dorm Essentials" },
-  { id: 7, name: "Sports Equipment" },
-  { id: 8, name: "Other" },
+  { id: 5, name: "Sports & Outdoors" },
+  { id: 6, name: "Appliances" },
+  { id: 7, name: "School Supplies" },
+  { id: 8, name: "Tickets & Events" },
+  { id: 9, name: "Other" },
 ];
 
 export const conditions = [
-  "All",
   "New",
   "Like New",
-  "Excellent",
+  "Very Good",
   "Good",
   "Fair",
-  "Acceptable",
+  "Poor",
 ];
 
 export const sortOptions = [
@@ -211,4 +211,49 @@ export const sortOptions = [
   { value: "oldest", label: "Oldest First" },
   { value: "priceLow", label: "Price: Low to High" },
   { value: "priceHigh", label: "Price: High to Low" },
+];
+
+export const mockItems = [
+  {
+    id: 1,
+    name: "TI-84 Plus CE Graphing Calculator",
+    price: 75.0,
+    originalPrice: 120.0,
+    condition: "Good",
+    description:
+      "TI-84 Plus CE graphing calculator in good condition. Perfect functionality. Comes with charging cable and protective case.",
+    category: "Electronics",
+    listedDate: "2 days ago",
+    location: "North Campus",
+    image: "/placeholder.svg?height=600&width=600",
+    seller: {
+      id: "user1",
+      username: "alexj",
+      rating: 4.8,
+      reviewCount: 23,
+    },
+    featured: false,
+    recommended: true,
+  },
+  {
+    id: 2,
+    name: "Calculus Textbook",
+    price: 45.99,
+    originalPrice: 60.0,
+    condition: "Like New",
+    description:
+      "Calculus: Early Transcendentals 8th Edition. Barely used, no markings.",
+    category: "Books",
+    listedDate: "1 week ago",
+    location: "South Campus",
+    image: "/placeholder.svg?height=600&width=600",
+    seller: {
+      id: "user2",
+      username: "jamies",
+      rating: 4.9,
+      reviewCount: 15,
+    },
+    featured: true,
+    recommended: false,
+  },
 ];
